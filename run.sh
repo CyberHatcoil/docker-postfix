@@ -34,7 +34,7 @@ add_config_value "smtp_use_tls" "yes"
 add_config_value "smtp_sasl_auth_enable" "yes"
 add_config_value "smtp_sasl_password_maps" "hash:\/etc\/postfix\/sasl_passwd"
 add_config_value "smtp_sasl_security_options" "noanonymous"
-add_config_value "mynetworks" ${AUTHORIZED_NETWORKS}
+echo "mynetworks=${AUTHORIZED_NETWORKS}" >> /etc/postfix/main.cf
 
 # Create sasl_passwd file with auth credentials
 if [ ! -f /etc/postfix/sasl_passwd ]; then
