@@ -16,10 +16,9 @@ function add_config_value() {
 }
 
 [ -z "${SMTP_SERVER}" ] && echo "SMTP_SERVER is not set" && exit 1
-[ -z "${SMTP_USERNAME}" ] && echo "SMTP_USERNAME is not set" && exit 1
-[ -z "${SMTP_PASSWORD}" ] && echo "SMTP_PASSWORD is not set" && exit 1
+[ -z "${API_KEY}" ] && echo "API_KEY is not set" && exit 1
 [ -z "${SERVER_HOSTNAME}" ] && echo "SERVER_HOSTNAME is not set" && exit 1
-
+[ -z "${AUTHORIZED_NETWORKS}" ] && echo "AUTHORIZED_NETWORKS is not set" && exit 1
 SMTP_PORT="${SMTP_PORT-587}"
 
 #Get the domain from the server host name
@@ -35,13 +34,14 @@ add_config_value "smtp_use_tls" "yes"
 add_config_value "smtp_sasl_auth_enable" "yes"
 add_config_value "smtp_sasl_password_maps" "hash:\/etc\/postfix\/sasl_passwd"
 add_config_value "smtp_sasl_security_options" "noanonymous"
+add_config_value "mynetworks" ${AUTHORIZED_NETWORKS}
 
 # Create sasl_passwd file with auth credentials
 if [ ! -f /etc/postfix/sasl_passwd ]; then
   grep -q "${SMTP_SERVER}" /etc/postfix/sasl_passwd  > /dev/null 2>&1
   if [ $? -gt 0 ]; then
     echo "Adding SASL authentication configuration"
-    echo "[${SMTP_SERVER}]:${SMTP_PORT} ${SMTP_USERNAME}:${SMTP_PASSWORD}" >> /etc/postfix/sasl_passwd
+    echo "[${SMTP_SERVER}]:${SMTP_PORT} apikey:${API_KEY}" >> /etc/postfix/sasl_passwd
     postmap /etc/postfix/sasl_passwd
   fi
 fi
